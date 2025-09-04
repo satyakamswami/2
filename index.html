@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Games Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e94560;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .game-title {
+            font-size: 1.8rem;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .game-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #e94560, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .score {
+            font-size: 1.2rem;
+            color: #00d4ff;
+            margin: 10px 0;
+        }
+        
+        .number-display {
+            font-size: 3rem;
+            color: #00d4ff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            margin: 20px 0;
+        }
+        
+        .sequence-display {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .sequence-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .color-red { background: #e94560; color: white; }
+        .color-blue { background: #00d4ff; color: white; }
+        .color-green { background: #2ecc71; color: white; }
+        .color-yellow { background: #f1c40f; color: black; }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .color-btn {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .message {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1rem;
+            min-height: 25px;
+        }
+        
+        .success { color: #2ecc71; }
+        .error { color: #e94560; }
+        
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .game-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Dark Games Hub</h1>
+            <p>Two fun games to test your skills!</p>
+        </div>
+        
+        <div class="games-grid">
+            <!-- Number Guessing Game -->
+            <div class="game-card">
+                <h2 class="game-title">🎯 Number Guessing Game</h2>
+                <div class="game-area">
+                    <div class="score">Score: <span id="guessScore">0</span></div>
+                    <div class="number-display" id="targetNumber">?</div>
+                    <div class="message" id="guessMessage">I'm thinking of a number between 1-100!</div>
+                    <div class="input-area">
+                        <input type="number" id="guessInput" min="1" max="100" placeholder="Your guess" 
+                               style="padding: 10px; border-radius: 10px; border: 2px solid #00d4ff; background: rgba(0,0,0,0.5); color: #00d4ff; text-align: center; width: 120px;">
+                        <button class="btn" onclick="makeGuess()">Guess!</button>
+                    </div>
+                    <button class="btn" onclick="newGuessGame()">New Game</button>
+                </div>
+            </div>
+            
+            <!-- Memory Sequence Game -->
+            <div class="game-card">
+                <h2 class="game-title">🧠 Memory Sequence Game</h2>
+                <div class="game-area">
+                    <div class="score">Level: <span id="memoryLevel">1</span> | Score: <span id="memoryScore">0</span></div>
+                    <div class="sequence-display" id="sequenceDisplay"></div>
+                    <div class="message" id="memoryMessage">Watch the sequence, then repeat it!</div>
+                    <div class="input-area" id="colorButtons" style="display: none;">
+                        <button class="color-btn color-red" onclick="playerInput(0)">1</button>
+                        <button class="color-btn color-blue" onclick="playerInput(1)">2</button>
+                        <button class="color-btn color-green" onclick="playerInput(2)">3</button>
+                        <button class="color-btn color-yellow" onclick="playerInput(3)">4</button>
+                    </div>
+                    <button class="btn" onclick="startMemoryGame()">Start Game</button>
+                    <button class="btn" onclick="showSequence()" id="showBtn" style="display: none;">Show Sequence</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Number Guessing Game
+        let targetNum = Math.floor(Math.random() * 100) + 1;
+        let guessScore = 0;
+        let guessAttempts = 0;
+
+        function makeGuess() {
+            const input = document.getElementById('guessInput');
+            const guess = parseInt(input.value);
+            const message = document.getElementById('guessMessage');
+            
+            if (!guess || guess < 1 || guess > 100) {
+                message.textContent = 'Please enter a number between 1 and 100!';
+                message.className = 'message error';
+                return;
+            }
+            
+            guessAttempts++;
+            
+            if (guess === targetNum) {
+                const points = Math.max(10 - guessAttempts, 1);
+                guessScore += points;
+                document.getElementById('guessScore').textContent = guessScore;
+                document.getElementById('targetNumber').textContent = targetNum;
+                message.textContent = `🎉 Correct! You got ${points} points! (${guessAttempts} attempts)`;
+                message.className = 'message success';
+                input.value = '';
+                setTimeout(newGuessGame, 2000);
+            } else if (guess < targetNum) {
+                message.textContent = `📈 Too low! Try a higher number. (Attempt ${guessAttempts})`;
+                message.className = 'message';
+            } else {
+                message.textContent = `📉 Too high! Try a lower number. (Attempt ${guessAttempts})`;
+                message.className = 'message';
+            }
+            
+            input.value = '';
+        }
+
+        function newGuessGame() {
+            targetNum = Math.floor(Math.random() * 100) + 1;
+            guessAttempts = 0;
+            document.getElementById('targetNumber').textContent = '?';
+            document.getElementById('guessMessage').textContent = "I'm thinking of a new number between 1-100!";
+            document.getElementById('guessMessage').className = 'message';
+        }
+
+        // Memory Sequence Game
+        let sequence = [];
+        let playerSequence = [];
+        let memoryLevel = 1;
+        let memoryScore = 0;
+        let isShowingSequence = false;
+        const colors = ['color-red', 'color-blue', 'color-green', 'color-yellow'];
+
+        function startMemoryGame() {
+            memoryLevel = 1;
+            memoryScore = 0;
+            sequence = [];
+            playerSequence = [];
+            document.getElementById('memoryLevel').textContent = memoryLevel;
+            document.getElementById('memoryScore').textContent = memoryScore;
+            document.getElementById('memoryMessage').textContent = 'Get ready...';
+            document.getElementById('colorButtons').style.display = 'none';
+            document.getElementById('showBtn').style.display = 'inline-block';
+            
+            generateSequence();
+            setTimeout(showSequence, 1000);
+        }
+
+        function generateSequence() {
+            sequence.push(Math.floor(Math.random() * 4));
+        }
+
+        function showSequence() {
+            if (isShowingSequence) return;
+            
+            isShowingSequence = true;
+            playerSequence = [];
+            document.getElementById('colorButtons').style.display = 'none';
+            document.getElementById('showBtn').style.display = 'none';
+            document.getElementById('memoryMessage').textContent = 'Watch carefully...';
+            
+            const display = document.getElementById('sequenceDisplay');
+            display.innerHTML = '';
+            
+            sequence.forEach((colorIndex, index) => {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = `sequence-item ${colors[colorIndex]}`;
+                    item.textContent = colorIndex + 1;
+                    display.appendChild(item);
+                    
+                    if (index === sequence.length - 1) {
+                        setTimeout(() => {
+                            isShowingSequence = false;
+                            document.getElementById('colorButtons').style.display = 'flex';
+                            document.getElementById('memoryMessage').textContent = 'Now repeat the sequence!';
+                        }, 800);
+                    }
+                }, index * 600);
+            });
+        }
+
+        function playerInput(colorIndex) {
+            if (isShowingSequence) return;
+            
+            playerSequence.push(colorIndex);
+            
+            // Check if current input is correct
+            const currentIndex = playerSequence.length - 1;
+            if (playerSequence[currentIndex] !== sequence[currentIndex]) {
+                document.getElementById('memoryMessage').textContent = '❌ Wrong! Game Over. Try again!';
+                document.getElementById('memoryMessage').className = 'message error';
+                document.getElementById('colorButtons').style.display = 'none';
+                document.getElementById('showBtn').style.display = 'none';
+                setTimeout(() => {
+                    document.getElementById('memoryMessage').className = 'message';
+                }, 2000);
+                return;
+            }
+            
+            // Check if sequence is complete
+            if (playerSequence.length === sequence.length) {
+                memoryScore += memoryLevel * 10;
+                memoryLevel++;
+                document.getElementById('memoryLevel').textContent = memoryLevel;
+                document.getElementById('memoryScore').textContent = memoryScore;
+                document.getElementById('memoryMessage').textContent = `✅ Perfect! Level ${memoryLevel} coming up...`;
+                document.getElementById('memoryMessage').className = 'message success';
+                
+                setTimeout(() => {
+                    document.getElementById('memoryMessage').className = 'message';
+                    generateSequence();
+                    showSequence();
+                }, 1500);
+            }
+        }
+
+        // Enter key support for guessing game
+        document.getElementById('guessInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                makeGuess();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979f10a303ea6470',t:'MTc1NzAwNTQ1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
